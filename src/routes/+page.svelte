@@ -1,6 +1,5 @@
 <script lang="ts">
   import "@/styles/styles.css"; // HTML renderer styles
-  import { setContext } from "svelte";
   import { Carta, Markdown, MarkdownEditor } from "carta-md";
   import { Carta as CartaType } from "carta-md";
   import localStorageStore from "$lib/stores/localStorage";
@@ -10,6 +9,7 @@
   import Stats from "$lib/parts/Stats.svelte";
   import { placeholder } from "$lib/functions/placeholder";
   import { onMount } from "svelte";
+  import { Check, XIcon } from "lucide-svelte";
 
   // Plugins:
 
@@ -77,38 +77,47 @@
   import { subscript } from "carta-plugin-subscript";
   // End Plugins
 
-  let leftWidth = 50;
+  let leftWidth = $state(50);
   let isResizing = false;
-  let selectedTab: "write" | "preview" = "write";
+  let selectedTab: "write" | "preview" = $state("write");
   let editorScrollTop = 0;
   let rendererScrollTop = 0;
-  let isScrollSyncEnabled = true;
-  let carta: CartaType;
-  let source = localStorageStore.get("markdown") || "";
-  setContext("source", source);
-  $: localStorageStore.set("markdown", source);
+  let isScrollSyncEnabled = $state(true);
 
-  $: carta = new Carta({
-    rehypeOptions: { allowDangerousHtml: true },
-    sanitizer: DOMPurify.sanitize,
-    theme: $markdownTheme === "light" ? "light-plus" : "dark-plus",
-    extensions: [
-      slash({
-        snippets: additionalSnippets,
-      }),
-      emoji(),
-      externalLinks(),
-      admonitions(),
-      math(),
-      code({ theme: $markdownTheme === "light" ? "light-plus" : "dark-plus" }),
-      rawhtml,
-      subscript(),
-    ],
-    gfmOptions: {
-      // remark-gfm that Carta uses convert single tilde to strikethrough, disable that to use single tilde for subscript.
-      // see https://stackoverflow.com/a/78076200/7884074
-      singleTilde: false,
-    },
+  let carta: CartaType = $derived(
+    new Carta({
+      rehypeOptions: { allowDangerousHtml: true },
+      sanitizer: DOMPurify.sanitize,
+      theme: $markdownTheme === "light" ? "light-plus" : "dark-plus",
+      extensions: [
+        slash({
+          snippets: additionalSnippets,
+        }),
+        emoji(),
+        externalLinks(),
+        admonitions(),
+        math(),
+        code({ theme: $markdownTheme === "light" ? "light-plus" : "dark-plus" }),
+        rawhtml,
+        subscript(),
+      ],
+      gfmOptions: {
+        // remark-gfm that Carta uses convert single tilde to strikethrough, disable that to use single tilde for subscript.
+        // see https://stackoverflow.com/a/78076200/7884074
+        singleTilde: false,
+      },
+    }),
+  );
+
+  let source = $state("");
+
+  onMount(() => {
+    const cached = localStorageStore.get("markdown");
+    if (cached) source = cached;
+  });
+
+  $effect(() => {
+    localStorageStore.set("markdown", source);
   });
 
   function handleEditorScroll(event: Event) {
@@ -174,18 +183,13 @@
         style.innerHTML = `
           @media (max-width: 768px) {
             .carta-toolbar {
-              bottom: 18px !important;
+              height: 68px !important;
               padding-right: 3px !important;
+              padding-bottom: 10px !important;
             }
             .stats {
               bottom: 68px !important;
               border-block: 1px solid #333333 !important;
-            }
-            .carta-icons-menu {
-              margin-bottom: 36px !important;
-            }
-            .sidebar-icon-buttons {
-              margin-bottom: 40px !important;
             }
           }
         `;
@@ -207,27 +211,28 @@
   <Stats />
 {/key}
 
-<div class="flex h-[calc(100dvh-72px)] bg-mono-background">
+<div
+  class={`flex h-[calc(100dvh-72px)] ${$markdownTheme === "light" ? "bg-mono-lightBackground" : "bg-mono-background"}`}>
   <div
     class="editor"
     style="width: {leftWidth}%;">
     <div class="flex h-full overflow-hidden">
       <div
-        class="line-count hidden p-2 text-gray-600 text-right border-r border-[#252525] w-12 {(
+        class="line-count hidden p-2 text-gray-600 text-right border-r border-mono-accentDark w-12 {(
           selectedTab === 'write'
         ) ?
           ''
         : 'hidden'}">
       </div>
       <div
-        class="w-full pb-[env(safe-area-inset-bottom)] p-2 border-none outline-none resize-none bg-mono-background font-mono overflow-y-auto"
-        on:scroll="{handleEditorScroll}">
+        class={`w-full p-2 border-none outline-none resize-none ${$markdownTheme === "light" ? "bg-mono-lightBackground" : "bg-mono-background"} font-mono overflow-y-auto`}
+        onscroll={handleEditorScroll}>
         {#key $markdownTheme}
           <MarkdownEditor
             {carta}
-            bind:value="{source}"
+            bind:value={source}
             bind:selectedTab
-            theme="{$markdownTheme}"
+            theme={$markdownTheme}
             mode="tabs"
             {placeholder} />
         {/key}
@@ -235,34 +240,39 @@
     </div>
   </div>
 
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
-    class="divider w-1 h-full cursor-ew-resize bg-[#202020]"
+    class="divider w-1 h-full cursor-ew-resize bg-mono-card"
     style="left: calc({leftWidth}% - 5px);"
-    on:mousedown="{handleMouseDown}">
+    onmousedown={handleMouseDown}>
   </div>
 
   <div
     class="renderer pb-[15px] p-2 overflow-auto markdown-content"
     style="width: {100 - leftWidth}%"
-    on:scroll="{handleRendererScroll}">
+    onscroll={handleRendererScroll}>
     <div class="renderer-toolbar">
-      <span class="mr-2 text-type-primary">Sync Scroll</span>
-      <label class="inline-flex items-center">
+      <span class="mr-3 text-type-primary">Sync scroll</span>
+      <label
+        class="inline-flex items-center cursor-pointer"
+        title="Theme Toggle">
         <input
           type="checkbox"
-          bind:checked="{isScrollSyncEnabled}"
+          bind:checked={isScrollSyncEnabled}
           class="hidden" />
         <span
-          class="{`relative inline-block w-8 h-5 transition duration-200 ease-in-out ${isScrollSyncEnabled ? 'bg-[#2E6AAC]' : 'bg-[#3a3a3a]'} rounded-full cursor-pointer`}">
+          class={`relative inline-block w-8 h-5 transition duration-200 ease-in-out ${
+            isScrollSyncEnabled ? "bg-mono-blueAccent" : "bg-mono-accentLight2"
+          } rounded-full`}>
           <span
-            class="{`absolute top-1 left-1 inline-block w-3 h-3 bg-white rounded-full transition-transform duration-200 ease-in-out ${isScrollSyncEnabled ? 'translate-x-3' : ''}`}"
-          ></span>
-          <span
-            class="{`absolute top-1 left-1 flex items-center justify-center w-3 h-3 transition-transform duration-200 ${isScrollSyncEnabled ? 'translate-x-3' : ''}`}">
-            <i
-              class="{`fas ${isScrollSyncEnabled ? 'fa-check' : 'fa-times'} ${isScrollSyncEnabled ? 'text-[#2E6AAC]' : 'text-type-footer'} text-[10px]`}"
-            ></i>
+            class={`absolute top-1 left-1 inline-block w-3 h-3 rounded-full transition-transform duration-200 ease-in-out ${
+              isScrollSyncEnabled ? "translate-x-3" : ""
+            }`}>
+            {#if isScrollSyncEnabled}
+              <Check class="w-3 h-3 text-type-emphasized" />
+            {:else}
+              <XIcon class="w-3 h-3 text-type-emphasized" />
+            {/if}
           </span>
         </span>
       </label>
@@ -270,8 +280,8 @@
     {#key source + $markdownTheme}
       <Markdown
         {carta}
-        value="{source}"
-        theme="{$markdownTheme}" />
+        value={source}
+        theme={$markdownTheme} />
     {/key}
   </div>
 </div>

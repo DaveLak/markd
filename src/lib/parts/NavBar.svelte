@@ -9,9 +9,10 @@
   import HtmlButton from "$lib/components/buttons/HTMLButton.svelte";
   import FullscreenToggle from "$lib/components/buttons/FullscreenToggle.svelte";
   import MdButton from "$lib/components/buttons/MdButton.svelte";
+  import ThemeToggle from "$lib/components/buttons/ThemeToggle.svelte";
 
-  let isSidebarOpen = false;
-  let exportMenuOpen = false;
+  let isSidebarOpen = $state(false);
+  let exportMenuOpen = $state(false);
   let preventClose = false;
 
   function toggleSidebar() {
@@ -42,7 +43,7 @@
 <header class="navbar w-full p-4 bg-mono-card z-20">
   <nav class="flex justify-between items-center">
     <button
-      on:click="{() => goto('/')}"
+      onclick={() => goto("/")}
       title="Home"
       class="hover:no-underline">
       <div class="flex flex-row gap-3 items-center">
@@ -58,7 +59,7 @@
       {#if $page.url.pathname === "/"}
         <IconButton
           title="Help"
-          onClick="{() => goto('/help')}">
+          onClick={() => goto("/help")}>
           <CircleHelp />
         </IconButton>
       {/if}
@@ -67,15 +68,15 @@
           <IconButton
             className="export-menu"
             title="Export"
-            onClick="{() => {
+            onClick={() => {
               exportMenuOpen = !exportMenuOpen;
-            }}">
+            }}>
             <FileText />
           </IconButton>
         {/if}
         {#if exportMenuOpen}
           <div
-            class="origin-top-right z-40 absolute right-0 mt-2 w-48 rounded-md bg-mono-background border border-[#333333]"
+            class="origin-top-right z-40 absolute right-0 mt-2 w-48 rounded-md bg-mono-background border border-mono-divider"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="user-menu-button"
@@ -92,7 +93,7 @@
       {/if}
       <IconButton
         title="Navigation"
-        onClick="{toggleSidebar}">
+        onClick={toggleSidebar}>
         <Menu />
       </IconButton>
     </div>
