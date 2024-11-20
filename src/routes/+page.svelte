@@ -1,5 +1,5 @@
 <script lang="ts">
-  import "@/styles/styles.css"; // HTML renderer styles
+  import { rendererTheme } from "$lib/stores/rendererThemeStore";
   import { Carta, Markdown, MarkdownEditor } from "carta-md";
   import { editorTheme } from "$lib/stores/editorThemeStore";
   import { placeholder } from "$lib/functions/placeholder";
@@ -11,6 +11,7 @@
   import DOMPurify from "isomorphic-dompurify";
   import Stats from "$lib/parts/Stats.svelte";
   import { onMount } from "svelte";
+  import "@/styles/styles.css"; // HTML renderer styles
 
   // Plugins:
 
@@ -100,7 +101,7 @@
         externalLinks(),
         admonitions(),
         math(),
-        code({ theme: $editorTheme }),
+        code({ theme: $rendererTheme }),
         rawhtml,
         subscript(),
       ],
@@ -185,13 +186,16 @@
         style.id = "pwa-style";
         style.innerHTML = `
           @media (max-width: 768px) {
+            .carta-icons-menu {
+              margin-bottom: 30px !important;
+            }
             .carta-toolbar {
-              height: 68px !important;
+              height: 70px !important;
               padding-right: 3px !important;
               padding-bottom: 18px !important;
             }
             .stats {
-              bottom: 68px !important;
+              bottom: 70px !important;
               border-block: 1px solid #333333 !important;
             }
           }
