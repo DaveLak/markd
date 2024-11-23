@@ -3,7 +3,7 @@
   import { Carta, Markdown, MarkdownEditor } from "carta-md";
   import { editorTheme } from "$lib/stores/editorThemeStore";
   import { placeholder } from "$lib/functions/placeholder";
-  import localStorageStore from "$lib/stores/localStorage";
+  import { localStorageStore } from "$lib/stores/localStorage";
   import { markdownTheme } from "$lib/stores/themeStore";
   import NavBar from "$lib/parts/NavBar.svelte";
   import { Carta as CartaType } from "carta-md";
@@ -259,7 +259,7 @@
     style="width: {100 - leftWidth}%"
     onscroll={handleRendererScroll}>
     <div class="renderer-toolbar">
-      <span class="mr-3 text-type-primary">Sync scroll</span>
+      <span class="mr-3 text-type-primary">Scroll sync</span>
       <label
         class="inline-flex items-center cursor-pointer"
         title="Theme Toggle">
