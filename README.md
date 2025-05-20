@@ -36,14 +36,19 @@ editor.
 - Sleek dark UI
 - LaTeX support
 - Scroll sync
+- Light mode
 - Zen mode
 
 ![Editor example](.github/editor-preview.png) ![Printer preview](.github/printer-preview.png)
+
+![Glaze](.github/glaze.png)
 
 ### Contact Us
 
 - [GitHub Issues](https://github.com/itzCozi/markd/issues)
 - [Developers Email](mailto:dev@wyzie.ru)
+
+Our license is MIT and can be found on our website [here](https://markd.it/license).
 
 ---
 

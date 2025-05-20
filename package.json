@@ -1,27 +1,37 @@
 {
   "name": "markd",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://markd.it",
+  "contributors": [
+    "Pasithea",
+    "BadDeveloper"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/itzcozi/markd"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --log-level warn --write \"{src/**/*.{ts,js,svelte,html,css},*.{ts,js,svelte,html,css,json,md,xml}}\"",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check": "svelte-kit sync && svelte-check --workspace /src",
+    "check:watch": "svelte-kit sync && svelte-check --workspace /src --watch"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.6",
-    "@sveltejs/kit": "^2.8.2",
-    "@sveltejs/vite-plugin-svelte": "^4.0.1",
+    "@sveltejs/adapter-static": "^3.0.8",
+    "@sveltejs/kit": "^2.15.2",
+    "@sveltejs/vite-plugin-svelte": "^4.0.4",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
-    "prettier": "^3.3.3",
-    "prettier-plugin-svelte": "^3.3.2",
-    "svelte": "^5.2.7",
-    "svelte-check": "^4.1.0",
-    "tailwindcss": "^3.4.15",
+    "postcss": "^8.5.1",
+    "prettier": "^3.4.2",
+    "prettier-plugin-svelte": "^3.3.3",
+    "svelte": "^5.17.4",
+    "svelte-check": "^4.1.4",
+    "tailwindcss": "^3.4.17",
     "vite": "^5.4.11"
   },
-  "type": "module",
   "dependencies": {
     "@cartamd/plugin-code": "^4.0.6",
     "@cartamd/plugin-emoji": "^4.2.1",
@@ -29,10 +39,11 @@
     "@cartamd/plugin-slash": "^4.1.2",
     "@chevrotain/regexp-to-ast": "^11.0.3",
     "carta-md": "^4.6.7",
+    "carta-plugin-ins-del": "^2.0.1",
     "carta-plugin-subscript": "^2.0.0",
     "cssnano": "^7.0.6",
-    "isomorphic-dompurify": "^2.16.0",
-    "katex": "^0.16.11",
+    "isomorphic-dompurify": "^2.20.0",
+    "katex": "^0.16.20",
     "lucide-svelte": "^0.447.0",
     "rehype-external-links": "^3.0.0",
     "rehype-raw": "^7.0.0",
@@ -40,6 +51,33 @@
     "unified": "^11.0.5",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-pwa": "^0.20.5"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "singleQuote": false,
+    "svelteStrictMode": true,
+    "svelteAllowShorthand": true,
+    "svelteIndentScriptAndStyle": true,
+    "embeddedLanguageFormatting": "auto",
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "jsxSingleQuote": false,
+    "svelteSortOrder": "options-scripts-styles-markup",
+    "quoteProps": "as-needed",
+    "proseWrap": "always",
+    "useTabs": false,
+    "printWidth": 100,
+    "tabWidth": 2,
+    "singleAttributePerLine": true,
+    "semi": true,
+    "endOfLine": "lf",
+    "experimentalTernaries": true,
+    "htmlWhitespaceSensitivity": "css",
+    "filepath": "{src/**/*.{ts,js,svelte,html,css},*.{ts,js,svelte,html,css,json,md,xml}}",
+    "plugins": [
+      "prettier-plugin-svelte"
+    ]
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
 }
